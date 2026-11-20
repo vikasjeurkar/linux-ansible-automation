@@ -1,4 +1,4 @@
-Screenshot checklist (save PNGs in this folder with these exact names):
+
 
 01-ansible-playbook-run.png   -> ansible-playbook site.yml  (show PLAY RECAP with ok/changed, failed=0)
 02-users-created.png          -> id opsadmin && id appuser
