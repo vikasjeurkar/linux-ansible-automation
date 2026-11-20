@@ -1,0 +1,28 @@
+---
+- name: Create and configure users
+  hosts: linux
+  tasks:
+    - name: Load OS-specific variables
+      ansible.builtin.include_vars: "../vars/{{ ansible_os_family }}.yml"
+
+    - name: Create users
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        comment: "{{ item.comment }}"
+        shell: "{{ item.shell }}"
+        groups: "{{ sudo_group if item.sudo else omit }}"
+        append: true
+        create_home: true
+        state: present
+      loop: "{{ admin_users }}"
+
+    - name: Allow passwordless sudo for admin users (validated)
+      ansible.builtin.copy:
+        dest: "/etc/sudoers.d/{{ item.name }}"
+        content: "{{ item.name }} ALL=(ALL) NOPASSWD:ALL\n"
+        owner: root
+        group: root
+        mode: "0440"
+        validate: /usr/sbin/visudo -cf %s
+      loop: "{{ admin_users }}"
+      when: item.sudo

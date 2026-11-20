@@ -1,0 +1,7 @@
+---
+cron_package: cronie
+cron_service: crond
+ssh_service: sshd
+time_package: chrony
+time_service: chronyd
+sudo_group: wheel

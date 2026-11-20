@@ -1,0 +1,7 @@
+---
+cron_package: cron
+cron_service: cron
+ssh_service: ssh
+time_package: chrony
+time_service: chrony
+sudo_group: sudo

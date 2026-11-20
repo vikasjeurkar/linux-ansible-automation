@@ -1,0 +1,52 @@
+---
+- name: Deploy Bash scripts and schedule them with cron
+  hosts: linux
+  tasks:
+    - name: Create automation directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      loop:
+        - "{{ automation_home }}"
+        - "{{ scripts_dir }}"
+        - "{{ backup_dir }}"
+        - "{{ log_dir }}"
+
+    - name: Copy scripts to the server
+      ansible.builtin.copy:
+        src: "../scripts/{{ item }}"
+        dest: "{{ scripts_dir }}/{{ item }}"
+        owner: root
+        group: root
+        mode: "0755"
+      loop:
+        - backup.sh
+        - disk_usage_monitor.sh
+        - rotate_logs.sh
+
+    - name: Cron - daily backup at 02:00
+      ansible.builtin.cron:
+        name: "daily backup"
+        minute: "0"
+        hour: "2"
+        user: root
+        job: "BACKUP_SRC='{{ backup_sources }}' BACKUP_DEST={{ backup_dir }} RETENTION_DAYS={{ backup_retention_days }} {{ scripts_dir }}/backup.sh >> {{ log_dir }}/cron.log 2>&1"
+
+    - name: Cron - disk usage check every 30 minutes
+      ansible.builtin.cron:
+        name: "disk usage monitor"
+        minute: "*/30"
+        user: root
+        job: "THRESHOLD={{ disk_threshold_percent }} {{ scripts_dir }}/disk_usage_monitor.sh >> {{ log_dir }}/cron.log 2>&1"
+
+    - name: Cron - weekly log rotation (Sunday 03:00)
+      ansible.builtin.cron:
+        name: "log rotation"
+        minute: "0"
+        hour: "3"
+        weekday: "0"
+        user: root
+        job: "LOG_DIR={{ log_dir }} RETENTION_DAYS={{ log_retention_days }} {{ scripts_dir }}/rotate_logs.sh >> {{ log_dir }}/cron.log 2>&1"

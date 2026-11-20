@@ -1,0 +1,31 @@
+---
+# Directories used by the automation scripts
+automation_home: /opt/automation
+scripts_dir: "{{ automation_home }}/scripts"
+backup_dir: /var/backups/automation
+log_dir: /var/log/automation
+
+# Backup settings
+backup_sources: "/etc /home"
+backup_retention_days: 7
+
+# Disk monitoring
+disk_threshold_percent: 80
+
+# Log rotation
+log_retention_days: 14
+
+# Users to create on every server
+admin_users:
+  - { name: opsadmin, comment: "Operations Admin", shell: /bin/bash, sudo: true }
+  - { name: appuser,  comment: "Application User", shell: /bin/bash, sudo: false }
+
+# Common packages (same name on RHEL and Ubuntu)
+common_packages:
+  - git
+  - curl
+  - vim
+  - htop
+  - rsync
+  - tar
+  - unzip

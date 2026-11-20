@@ -1,0 +1,6 @@
+---
+# Master playbook: full server setup
+- import_playbook: playbooks/packages.yml
+- import_playbook: playbooks/users.yml
+- import_playbook: playbooks/services.yml
+- import_playbook: playbooks/deploy_scripts.yml

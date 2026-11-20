@@ -1,0 +1,5 @@
+# Manual cron setup (Ansible does this automatically via playbooks/deploy_scripts.yml)
+# Edit with: sudo crontab -e
+0 2 * * *    BACKUP_SRC="/etc /home" /opt/automation/scripts/backup.sh >> /var/log/automation/cron.log 2>&1
+*/30 * * * * THRESHOLD=80 /opt/automation/scripts/disk_usage_monitor.sh >> /var/log/automation/cron.log 2>&1
+0 3 * * 0    /opt/automation/scripts/rotate_logs.sh >> /var/log/automation/cron.log 2>&1
